@@ -6,21 +6,21 @@
 Artist = require '_render'
 Game = require '_game'
 
--- Load some default values for our rectangle.
+local theGame = Game()
+local theArtist = Artist()
+
 function love.load()
-    Game:load()
-    Game:setRenderer(Artist)
-    Artist:load()
+    theGame:load()
+    theGame:setRenderer(theArtist)
+    theArtist:load()
 end
 
--- Increase the size of the rectangle every frame.
 function love.update(dt)
-    Game:update(dt)
-    Artist:update(dt)
+    theGame:update(dt)
+    theArtist:update(dt)
 end
 
--- Draw a coloured rectangle.
 function love.draw()
-    Game:draw()
-    Artist:draw()
+    theGame:draw()
+    theArtist:draw()
 end

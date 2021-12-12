@@ -5,6 +5,8 @@
 
 Object = require "classic"
 
+require "parts/rload"
+
 Artist = Object:extend()
 
 function Artist:load()

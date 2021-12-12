@@ -1,5 +1,5 @@
 --[[
-	Rendering class for the game.
+	Logic class for the game.
 	Jason A. Petrasko (C) 2022
 ]]
 
