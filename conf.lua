@@ -3,9 +3,9 @@
 ]]
 
 function love.conf(t)
-	t.window.title = "subscript"
-	t.window.width = 1200
-	t.window.height = 720
+	t.window.title = "subscript+"
+	t.window.width = 900
+	t.window.height = 600
 	t.window.resizable = false
-	t.identity = "subscript"
+	t.identity = "subscript_plus"
 end

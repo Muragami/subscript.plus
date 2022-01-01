@@ -5,12 +5,15 @@
 
 Object = require "classic"
 
+require "parts/gload"
+
 Game = Object:extend()
 
 function Game:load()
 end
 
 function Game:update(dt)
+	self.artist:update(dt)
 end
 
 function Game:draw()
