@@ -8,7 +8,7 @@
 	and these will be called when you message the thread.
 	You may also install two special commands:
 		'`': a tick command, executed each tick of the thread (20 MS or faster)
-		'!': a bang command, executed then the thread is released (ended)
+		'!': a bang command, executed when the thread is released (ended)
 ]]
 
 local _name = ...

@@ -55,6 +55,8 @@ function Strand:release()
 		self.hold = self.hold - 1
 		if self.hold < 1 then
 			-- we are gone, so vamoose!
+			-- tell root we have a loose thread!
+			self.root:push({self.name, '~&', {}})
 			-- tell the thread to die
 			if self.thread then self.chan:push({self.name, '&', {}}) end
 			-- remove us from the system
@@ -96,7 +98,13 @@ function Strand:exec(name,cmd,var)
 	if f then
 		local ret = f(self,name,cmd,var)
 		if ret and name ~= self.name then
-			self:sendTo(name, { [1] = self.name, [2] = "~", ret })
+			self:sendTo(name, { self.name, "~", ret })
+		end
+	elseif self.command['?'] then
+		-- a default handler, so do that!
+		local ret = self.command['?'](self,name,cmd,var)
+		if ret and name ~= self.name then
+			self:sendTo(name, { self.name, "~", ret })
 		end
 	end
 end
@@ -135,6 +143,50 @@ function Strand:unsetCmds()
 end
 
 strandRoot = Strand('/','')
+
+--[[
+	Root has some logic built-in:
+		- tracking loose threads
+		- organizing lists of strands (chains)
+	so add that:
+]]
+strandRoot.loose_threads = {}
+strandRoot.chains = {}
+
+strandRoot.command['~&'] = function(self,name,cmd,var)
+	-- record a loose thread
+	self.loose_threads[name] = true
+end
+
+strandRoot.command['&&'] = function(self,name,cmd,var)
+	-- this one has ended, so remove the loose thread indicator
+	self.loose_threads[name] = nil
+end
+
+strandRoot.command['@+'] = function(self,name,cmd,var)
+	-- add to a chain
+	if self.chains[var[1]] then
+		self.chains[var[1]][name] = true
+	else
+		self.chains[var[1]] = { name = true }
+	end 
+end
+
+strandRoot.command['@-'] = function(self,name,cmd,var)
+	-- remove from a chain
+	if self.chains[var[1]] and self.chains[var[1]][name] then
+		self.chains[var[1]][name] = nil
+	end 
+end
+
+strandRoot.command["?"] = function(self,name,cmd,var)
+	-- message all in the chain 'cmd'
+	if self.chains[cmd] then
+		for k,_ in pairs(self.chains[cmd]) do
+			chanTable[k]:push({name, cmd, var})
+		end
+	end
+end
 
 function strandRootActions()
 	local msg = strandRoot.chan:pop()
@@ -179,4 +231,3 @@ end
 function strandSetGlobal(k,v)
 	strandVarMap[k] = v
 end
-

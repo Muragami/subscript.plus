@@ -59,22 +59,28 @@ function thread:disconnect(name)
 	end
 end
 
-function thread:sendRootMsg(...)
+function thread:sendRootMsg(cmd, var)
+	self.root:push({ self.name, cmd, var })
+end
+
+function thread:sendMsg(cmd, var)
+	local msg = { self.name, cmd, var }
 	local i = 1
-	local msg = {}
-	msg[1] = thread.name
-	while (arg[i]) do
-		msg[i + 1] = arg[i]
+	while self.send[i] do
+		self.send[i]:push(msg)
 		i = i + 1
 	end
-	self.root:push(msg)
+end
+
+function thread:sendMsgTo(target, cmd, var)
+	chanTable[target]:push({ self.name, cmd, var })
 end
 
 function thread:waitMsg(timeout)
 	return self.chan:demand(timeout)
 end
 
-function thread:setCmdFunc(cmd,func)
+function thread:setCmdFunc(cmd, func)
 	local t = type(func)
 	if t == 'string' then
 		self.command[cmd] = loadstring(func)
@@ -104,19 +110,19 @@ function thread:exec(tab)
 	end
 end
 
-local function addCmdFunc(thread,name,cmd,var)
+local function addCmdFunc(thread, name, cmd, var)
 	thread:setCmdFunc(var[1], var[2])
 end
 
-local function remCmdFunc(thread,name,cmd,var)
+local function remCmdFunc(thread, name, cmd, var)
 	thread:unsetCmdFunc(var[1])
 end
 
-local function remCmds(thread,name,cmd,var)
+local function remCmds(thread, name, cmd, var)
 	thread:unsetCmds()
 end
 
-local function endThread(thread,name,cmd,var)
+local function endThread(thread, name, cmd, var)
 	thread.valid = false
 	-- if we are going out with a bang, do that!
 	if thread.command['!'] then
@@ -124,7 +130,7 @@ local function endThread(thread,name,cmd,var)
 	end
 end
 
-local function setVars(thread,name,cmd,var)
+local function setVars(thread, name, cmd, var)
 	for k, v in pairs(var) do
 		thread.var[k] = v
 	end
