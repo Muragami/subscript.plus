@@ -70,11 +70,13 @@ function Strand:setCode(str)
 	if type(str) == 'string' then
 		if str ~= '' then 
 			-- custom code for this strand, so make that thread
-			self.thread = love.thread.newThread("local _name = ...\nrequire 'strand.thread'\n\n" .. str)
+			self.thread = love.thread.newThread("_name = ...\nrequire 'strand_thread'\n\n" .. str)
+			self.thread:start(self.name)
 		end
 	elseif not str then
 		-- install the default thread, which is a programmable function table
-		self.thread = love.thread.newThread("strand.default.lua")
+		self.thread = love.thread.newThread("strand_default.lua")
+		self.thread:start(self.name)
 	else
 		error("Strand:setCode() called with something other than a string or nil!")
 	end
@@ -199,19 +201,6 @@ function strandRootActions()
 		-- another?
 		msg = strandRoot.chan:pop()
 	end
-end
-
-function strandCheckErrors(onError)
-	for _, _strand in pairs(TLSC) do
-		if _strand.thread then 
-        	local err = _strand.thread:getError()
-        	if onError and err then
-        		onError(strand.name, err)
-        	else 
-        		assert(not err, err)
-        	end
-        end
-    end
 end
 
 function strandUpdate(dt)

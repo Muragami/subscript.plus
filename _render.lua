@@ -15,14 +15,14 @@ function Artist:load()
 	ttest = Text(ftest)
 	x = 0
 	p = 0
-	--ttest:set("ripple",false)
-	--ttest:set("vflip",0.05)
+	ttest:set("ripple",false)
+	ttest:set("vflip",0.05)
 end
 
-function Artist:update(dt)
-	ttest:update(dt)
+function Artist:update(tab)
+	ttest:update(tab[1])
 	x = x + 1
-	p = p + (dt * 20)
+	p = p + (tab[1] * 20)
 	if p > 100 then p = p - 100 end
 end
 
