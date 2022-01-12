@@ -3,11 +3,11 @@
 ]]
 
 -- the array that defines this thread that we will return
-local prg = {}
+local prg = { func = {} }
 
 -- *********************************************************
--- basic config
-prg.conf = { 	
+-- CONFIG
+prg.conf = {
 	static = true, 				-- never unload this thread
 	name = "I2007", 			-- unique thread name inside this progam
 	addr = "127.000.000.001", 	-- an address for this thread
@@ -20,8 +20,15 @@ prg.conf = {
 }
 
 -- *********************************************************
--- FUNCTIONS
+-- load function, called at thread start
+prg.load = function()
+end
 
+-- *********************************************************
+-- FUNCTIONS
+prg.func['`'] = function(self,tname,cmd,tab)
+
+end
 
 -- the prophecy is fulfilled!
 return prg

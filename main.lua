@@ -115,7 +115,10 @@ function love.displayrotated(index, orientation) callTopLevelCallback('displayro
 --function love.errorhandler(msg) callTopLevelCallback('errorhandler', { msg } ) end
 function love.lowmemory() callTopLevelCallback('lowmemory', {} ) end
 function love.quit() return callTopLevelCallback('quit', {} ) end
-function love.threaderror(thread, msg) callTopLevelCallback('threaderror', { thread, msg } ) end
+function love.threaderror(thread, msg)
+    if DEBUG then print("threaderror [" .. tostring(thread) .. "] " .. msg) end
+    callTopLevelCallback('threaderror', { thread, msg } ) 
+end
 function love.directorydropped(path) callTopLevelCallback('directorydropped', { path } ) end
 function love.filedropped(path) callTopLevelCallback('filedropped', { path } ) end
 function love.focus(x) callTopLevelCallback('focus', { x } ) end

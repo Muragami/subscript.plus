@@ -73,11 +73,18 @@ function Program.load(the_level)
 		local f = self.func[name]
 		if f then
 			if not f.strand then
-				local s = Strand(f.conf.name)
+				local s
+				if f.load then 
+					s = Strand(f.conf.name,false,string.dump(f.load))
+				else 
+					s = Strand(f.conf.name)
+				end
 				self.strand[name] = s
 				f.strand = s
 				-- put all it's functions in the pstack!
-				-- TODO
+				for k, v in pairs(f.func) do
+					s:setCmd(k,v)
+				end
 			end
 		end
 	end
